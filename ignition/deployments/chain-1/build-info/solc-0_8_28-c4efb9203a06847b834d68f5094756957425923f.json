@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-c4efb9203a06847b834d68f5094756957425923f",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.7.0"
+  },
+  "userSourceNameMap": {
+    "contracts/Voting.sol": "project/contracts/Voting.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/Voting.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\r\npragma solidity ^0.8.28;\r\n\r\ncontract Voting {\r\n\r\n    struct Proposal {\r\n        uint256 id;\r\n        string name;\r\n        string description;\r\n        string[] options;\r\n        uint256[] voteCounts;\r\n        uint256 endTime;\r\n        bool isActive;\r\n        address creator;\r\n    }\r\n\r\n    Proposal[] public proposals;\r\n    mapping(uint256 => mapping(address => bool)) public hasVoted;\r\n    address public admin;\r\n\r\n    event VoteCast(uint256 proposalId, address voter, uint256 optionIndex);\r\n\r\n    constructor() {\r\n        admin = msg.sender;\r\n    }\r\n\r\n    modifier onlyAdmin() {\r\n        require(msg.sender == admin, \"Not authorized\");\r\n        _;\r\n    }\r\n\r\n    function createProposal(\r\n        string memory name,\r\n        string memory description,\r\n        string[] memory options,\r\n        uint256 duration\r\n    ) external onlyAdmin {\r\n        uint256 proposalId = proposals.length;\r\n        uint256[] memory initialVotes = new uint256[](options.length);\r\n\r\n        proposals.push(Proposal({\r\n            id: proposalId,\r\n            name: name,\r\n            description: description,\r\n            options: options,\r\n            voteCounts: initialVotes,\r\n            endTime: block.timestamp + duration,\r\n            isActive: true,\r\n            creator: msg.sender\r\n        }));\r\n    }\r\n\r\n    function vote(uint256 proposalId, uint256 optionIndex) external {\r\n        require(proposalId < proposals.length, \"Proposal does not exist\");\r\n        require(block.timestamp < proposals[proposalId].endTime && proposals[proposalId].isActive, \"Voting closed\");\r\n        require(!hasVoted[proposalId][msg.sender], \"Cannot vote more than once\");\r\n        require(optionIndex < proposals[proposalId].options.length, \"The option you selected does not exist, please check available options and try again\");\r\n\r\n        proposals[proposalId].voteCounts[optionIndex] += 1;\r\n        hasVoted[proposalId][msg.sender] = true;\r\n        emit VoteCast(proposalId, msg.sender, optionIndex);\r\n    }\r\n\r\n    function getProposal(uint256 proposalId) external view returns(Proposal memory) {\r\n        require(proposalId < proposals.length, \"Proposal does not exist\");\r\n        return proposals[proposalId];\r\n    }\r\n\r\n    function endProposal(uint256 proposalId) external onlyAdmin {\r\n        require(proposalId < proposals.length, \"Proposal does not exist\");\r\n        proposals[proposalId].isActive = false;\r\n    }\r\n\r\n}"
+      }
+    }
+  }
+}
