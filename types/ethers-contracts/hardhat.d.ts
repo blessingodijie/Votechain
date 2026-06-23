@@ -10,13 +10,17 @@ import * as Contracts from "./index.js";
 
 declare module "@nomicfoundation/hardhat-ethers/types" {
   interface HardhatEthersHelpers extends HardhatEthersHelpersBase {
-  getContractFactory(name: 'Voting', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Voting__factory>
+  getContractFactory(name: 'StudentElection', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.StudentElection__factory>
+getContractFactory(name: 'Voting', signerOrOptions?: ethers.Signer | FactoryOptions): Promise<Contracts.Voting__factory>
 
-  getContractAt(name: 'Voting', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Voting>
+  getContractAt(name: 'StudentElection', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.StudentElection>
+getContractAt(name: 'Voting', address: string | ethers.Addressable, signer?: ethers.Signer): Promise<Contracts.Voting>
 
-  deployContract(name: 'Voting', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Voting>
+  deployContract(name: 'StudentElection', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.StudentElection>
+deployContract(name: 'Voting', signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Voting>
 
-  deployContract(name: 'Voting', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Voting>
+  deployContract(name: 'StudentElection', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.StudentElection>
+deployContract(name: 'Voting', args: any[], signerOrOptions?: ethers.Signer | DeployContractOptions): Promise<Contracts.Voting>
 
     // default types
     getContractFactory(

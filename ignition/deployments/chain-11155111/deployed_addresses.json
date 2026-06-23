@@ -1,3 +1,4 @@
 {
-  "VotingModule#Voting": "0x8541457A7dd0FB907541af91A65C52A31acb0471"
+  "VotingModule#Voting": "0x8541457A7dd0FB907541af91A65C52A31acb0471",
+  "ElectionModule#StudentElection": "0x171Be28075af95716bcf2F3dAe4CC0f3E12fe4e0"
 }

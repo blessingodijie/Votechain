@@ -1,0 +1,49 @@
+{
+  "_format": "hh3-sol-build-info-1",
+  "id": "solc-0_8_28-6f9f8a9a5c8161b976e5be74be664c3f6acc806f",
+  "solcVersion": "0.8.28",
+  "solcLongVersion": "0.8.28+commit.7893614a",
+  "compilerType": "solc",
+  "toolVersions": {
+    "hardhat": "3.7.0"
+  },
+  "userSourceNameMap": {
+    "contracts/StudentElection.sol": "project/contracts/StudentElection.sol"
+  },
+  "input": {
+    "language": "Solidity",
+    "settings": {
+      "evmVersion": "cancun",
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "outputSelection": {
+        "*": {
+          "": [
+            "ast"
+          ],
+          "*": [
+            "abi",
+            "evm.bytecode.linkReferences",
+            "evm.bytecode.object",
+            "evm.bytecode.opcodes",
+            "evm.bytecode.sourceMap",
+            "evm.deployedBytecode.immutableReferences",
+            "evm.deployedBytecode.linkReferences",
+            "evm.deployedBytecode.object",
+            "evm.deployedBytecode.opcodes",
+            "evm.deployedBytecode.sourceMap",
+            "evm.methodIdentifiers"
+          ]
+        }
+      },
+      "remappings": []
+    },
+    "sources": {
+      "project/contracts/StudentElection.sol": {
+        "content": "// SPDX-License-Identifier: UNLICENSED\r\npragma solidity ^0.8.28;\r\n\r\ncontract StudentElection {\r\n\r\n    struct Election {\r\n        uint256 id;\r\n        string title;\r\n        uint256 endTime;\r\n        bool isActive;\r\n        address creator;\r\n    }\r\n\r\n    struct Candidate {\r\n        uint256 id;\r\n        string name;\r\n        string position;\r\n        uint256 electionId;\r\n        uint256 voteCount;\r\n        address walletAddress;\r\n    }\r\n\r\n    Election[] public elections;\r\n    Candidate[] public candidates;\r\n    address public admin;\r\n    mapping(uint256 => mapping(string => mapping(address => bool))) public alreadyVoted;\r\n\r\n    event VoteCast(uint256 electionId, string position, address voter, uint256 candidateId);\r\n\r\n    constructor() {\r\n        admin = msg.sender;\r\n    }\r\n\r\n    modifier onlyAdmin() {\r\n        require(msg.sender == admin, \"Not authorized\");\r\n        _;\r\n    }\r\n\r\n    function createElection(\r\n        string memory title,\r\n        uint256 duration\r\n    ) external onlyAdmin {\r\n        uint256 electionId = elections.length;\r\n        elections.push(Election({\r\n            id: electionId,\r\n            title: title,\r\n            endTime: block.timestamp + duration,\r\n            isActive: true,\r\n            creator: msg.sender\r\n        }));\r\n    }\r\n\r\n    function addCandidate(\r\n        uint256 electionId,\r\n        string memory name,\r\n        string memory position,\r\n        address walletAddress\r\n    ) external onlyAdmin {\r\n        uint256 candidateId = candidates.length;\r\n        candidates.push(Candidate({\r\n            id: candidateId,\r\n            name: name,\r\n            position: position,\r\n            electionId: electionId,\r\n            voteCount: 0,\r\n            walletAddress: walletAddress\r\n        }));\r\n    }\r\n\r\n    function vote(uint256 candidateId) external {\r\n        require(candidateId < candidates.length, \"Candidate does not exist\");\r\n        Candidate storage candidate = candidates[candidateId];\r\n        Election storage election = elections[candidate.electionId];\r\n        require(election.isActive, \"Election is not active\");\r\n        require(block.timestamp < election.endTime, \"Voting has ended\");\r\n        require(\r\n            !alreadyVoted[candidate.electionId][candidate.position][msg.sender],\r\n            \"You have already voted for this position\"\r\n        );\r\n        candidate.voteCount += 1;\r\n        alreadyVoted[candidate.electionId][candidate.position][msg.sender] = true;\r\n        emit VoteCast(candidate.electionId, candidate.position, msg.sender, candidateId);\r\n    }\r\n\r\n    function getElection(uint256 electionId) external view returns(Election memory) {\r\n        require(electionId < elections.length, \"Election does not exist\");\r\n        return elections[electionId];\r\n    }\r\n\r\n    function getCandidates(uint256 electionId) external view returns(Candidate[] memory) {\r\n        uint256 count = 0;\r\n        for (uint256 i = 0; i < candidates.length; i++) {\r\n            if (candidates[i].electionId == electionId) {\r\n                count++;\r\n            }\r\n        }\r\n        Candidate[] memory result = new Candidate[](count);\r\n        uint256 j = 0;\r\n        for (uint256 i = 0; i < candidates.length; i++) {\r\n            if (candidates[i].electionId == electionId) {\r\n                result[j] = candidates[i];\r\n                j++;\r\n            }\r\n        }\r\n        return result;\r\n    }\r\n\r\n    function endElection(uint256 electionId) external onlyAdmin {\r\n        require(electionId < elections.length, \"Election does not exist\");\r\n        elections[electionId].isActive = false;\r\n    }\r\n}"
+      }
+    }
+  }
+}

@@ -49,18 +49,18 @@ describe("Voting Contract", () => {
         })
 
         it("should allow a valid vote", async () => {
-    await voting.connect(admin).createProposal(
-        "Blessing Odijie",
-        "Blessing Progressive Party",
-        ["Yes", "No"],
-        86400
-    );
+        await voting.connect(admin).createProposal(
+            "Blessing Odijie",
+            "Blessing Progressive Party",
+            ["Yes", "No"],
+            86400
+        );
 
-    await voting.connect(voter1).vote(0, 0);
+        await voting.connect(voter1).vote(0, 0);
 
-    const proposal = await voting.getProposal(0);
-    expect(proposal.voteCounts[0]).to.equal(1n);
-})
+        const proposal = await voting.getProposal(0);
+        expect(proposal.voteCounts[0]).to.equal(1n);
+        })
 
 it("should prevent a wallet from voting twice", async () => {
 await voting.connect(admin).createProposal( "Blessing Odijie", "Blessing Progressive Party", ["Yes", "No"], 86400 );
