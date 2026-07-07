@@ -2,4 +2,3 @@
 /* tslint:disable */
 /* eslint-disable */
 export { StudentElection__factory } from './StudentElection__factory.js';
-export { Voting__factory } from './Voting__factory.js';
